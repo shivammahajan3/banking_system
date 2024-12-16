@@ -8,6 +8,7 @@ class Employee
       @email = email
       @password = password
       @@employee_data[@@employee_count] = { "name" => @name, "email" => @email, "password" => @password }
+      puts "Your Employee_id is #{@@employee_count}"
     end
   
     def valid_employee?(id)
