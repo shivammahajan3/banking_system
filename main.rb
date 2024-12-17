@@ -1,5 +1,6 @@
 require_relative 'account'
 require_relative 'employee'
+include BankingSystem
 
 puts "-------------------------------"
 puts "Welcome to the Fraud Bank (^^)"
@@ -22,7 +23,15 @@ when 1
     password = gets
     Employee.new(name,email,password)
 when 2
-    puts "New Account"
+    puts "Enter Your Name"
+    name = gets
+    puts "Enter aadhar Number"
+    aadhar = gets.to_i
+    puts "Enter Contact Number"
+    contact = gets.to_i
+    puts "Deposit Initial Fund"
+    fund = gets.to_i
+    Account.new(name,fund,contact,aadhar)
 else
     puts "Invalid option. Please choose a valid number (1 or 2)."
 end
