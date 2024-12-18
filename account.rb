@@ -42,15 +42,21 @@ class Account
 
       case account_option
       when 1
+        puts "Enter Account Number:"
+        acc_num = gets.chomp
         puts "Enter the amount to deposit:"
         amount = gets.to_f
-        self.deposit(amount)
+        self.deposit(acc_num,amount)
       when 2
+        puts "Enter Account Number:"
+        acc_num = gets.chomp
         puts "Enter the amount to withdraw:"
         amount = gets.to_f
-        self.withdraw(amount)
+        withdraw(acc_num,amount)
       when 3
-        self.display_balance
+        puts "Enter Account Number:"
+        acc_num = gets.chomp
+        display_balance(acc_num)
       when 4
         puts "Enter Account Number of Receiver"
         reciver_acc_num = gets.chomp
