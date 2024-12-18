@@ -1,15 +1,10 @@
-require_relative 'banking_system'
-
 class Account
-  include BankingSystem::Transaction
-  include BankingSystem::Display
-
   attr_reader :account_number, :name
 
   @@total_accounts = 0
   @@customers = {}
 
-  def initialize(name, initial_deposit=0,aadhar)
+  def initialize(name, initial_deposit = 0, aadhar)
     @name = name
     @balance = initial_deposit
     @aadhar = aadhar
@@ -23,78 +18,66 @@ class Account
     if @@customers.key?(acc_num)
       return @@customers[acc_num]
     else
-      return false
+      return nil
     end
   end
 
-  def transaction_process
-    loop do
-      puts "--------------------------------------"
-      puts "Select option in Number 1, 2, 3 or 4"
-      puts "--------------------------------------"
-      puts "1. Deposit"
-      puts "2. Withdraw"
-      puts "3. Check balance"
-      puts "4. Transfer Amount"
-      puts "5. Exit"
-      
-      account_option = gets.to_i
+  def self.get_customer_all
+    return @@customers
+  end
 
-      case account_option
-      when 1
-        puts "Enter Account Number:"
-        acc_num = gets.chomp
-        puts "Enter the amount to deposit:"
-        amount = gets.to_f
-        self.deposit(acc_num,amount)
-      when 2
-        puts "Enter Account Number:"
-        acc_num = gets.chomp
-        puts "Enter the amount to withdraw:"
-        amount = gets.to_f
-        withdraw(acc_num,amount)
-      when 3
-        puts "Enter Account Number:"
-        acc_num = gets.chomp
-        display_balance(acc_num)
-      when 4
-        puts "Enter Account Number of Receiver"
-        reciver_acc_num = gets.chomp
-        if @@customers[reciver_acc_num]
-          puts "Enter The Amount"
-          amount = gets.to_i
-          balance = @@customers[@account_number]['balance']
-          if amount > 0 && amount <= balance
-            self.account_transfer(reciver_acc_num, amount)
-          else
-            puts "Please Enter a Valid amount"
-          end
-        else
-          puts "Customer Not found! Please enter a valid Account Number!"
-        end      
-      when 5
-        puts "Exiting Account Menu..."
-        break
+  def self.deposit(acc_num, amount)
+    customer = self.get_customer(acc_num)
+    if customer
+      $transaction_id += 1
+      if amount > 0
+        customer['balance'] += amount
+        puts "Deposited ₹#{amount} to account number #{acc_num}. New balance: ₹#{customer['balance']}"
+        self.set_success_transaction_history(acc_num)
       else
-        puts "Invalid option. Please choose again."
+        puts "Invalid deposit amount!"
+        self.set_fail_transaction_history(acc_num)
       end
+    else
+      puts "Account not found!"
     end
   end
 
-
-  def account_transfer(account_num, amount)
-    if @@customers[account_num]
-      @@customers[@account_number]['balance'] -= amount
-      @@customers[account_num]['balance'] += amount
-      puts "Transferred ₹#{amount} to Account Number: #{account_num}. New balance: ₹#{@@customers[@account_number]['balance']}"
+  def self.withdraw(acc_num, amount)
+    customer = self.get_customer(acc_num)
+    if customer
+      if amount > 0 && amount <= customer['balance']
+        customer['balance'] -= amount
+        puts "Withdrew ₹#{amount} from account number #{acc_num}. Remaining balance: ₹#{customer['balance']}"
+      else
+        puts "Invalid withdrawal amount or insufficient funds!"
+      end
     else
-      puts "Invalid receiver account number!"
+      puts "Account not found!"
     end
+  end
+
+  def self.set_success_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
+    $transaction_data[$transaction_id] = {
+              "from_customer" => sender_acc_num,
+              "to_customer" => receiver_acc_num, 
+              "status" => "Success",
+              "message" => "Done"
+    }
+  end
+
+  def self.set_fail_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
+    $transaction_data[$transaction_id] = {
+              "from_customer" => sender_acc_num, 
+              "to_customer" => receiver_acc_num, 
+              "status" => "Failure",
+              "message" => "Invalid deposit amount!"
+    }
   end
 
   private
 
   def generate_account_number
-    "AC#{200456}#{@@total_accounts}"
+    "AC#{200403}#{@@total_accounts}"
   end
 end
