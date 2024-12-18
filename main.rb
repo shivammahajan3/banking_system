@@ -1,37 +1,63 @@
 require_relative 'account'
-require_relative 'employee'
-include BankingSystem
+require_relative 'transaction'
 
 puts "-------------------------------"
-puts "Welcome to the Fraud Bank (^^)"
-puts "-------------------------------"
+puts "Welcome to the Bank (^^)"
 
-puts "Select option in Number 1 or 2"
-puts "-------------------------------"
-puts "1. Employee Registration"
-puts "2. New Account"
+account = nil 
 
-option = gets.to_i
+loop do
+    puts "-------------------------------------"
+    puts "Select option in Number 1, 2, 3 or 4"
+    puts "-------------------------------------"
+    puts "1. Create New Account"
+    puts "2. Search Customers"
+    puts "3. Transaction"
+    puts "4. All Customer Details"
+    puts "5. Exit"
 
-case option
-when 1
-    puts "Enter Your Name"
-    name = gets
-    puts "Enter Your Email"
-    email = gets
-    puts "Enter Your Password"
-    password = gets
-    Employee.new(name,email,password)
-when 2
-    puts "Enter Your Name"
-    name = gets
-    puts "Enter aadhar Number"
-    aadhar = gets.to_i
-    puts "Enter Contact Number"
-    contact = gets.to_i
-    puts "Deposit Initial Fund"
-    fund = gets.to_i
-    Account.new(name,fund,contact,aadhar)
-else
-    puts "Invalid option. Please choose a valid number (1 or 2)."
+    option = gets.to_i
+
+    case option
+    when 1
+        puts "Enter Your Name"
+        name = gets.chomp
+        puts "Enter aadhar Number"
+        aadhar = gets.to_i
+        puts "Deposit Initial Fund"
+        fund = gets.to_f
+        account = Account.new(name, fund, aadhar)
+    when 2
+        puts "Enter Account Number"
+        account_number = gets.chomp
+        customer = Account.get_customer(account_number)
+        if customer
+            puts "Customer Info:"
+            puts "Name: #{customer['name']}"
+            puts "Aadhar: #{customer['aadhar']}"
+            puts "Balance: #{customer['balance']}"
+        else
+            puts "Customer Not found! Please enter valid account number"
+        end
+    when 3
+        if account.nil?
+            puts "You need to create an account first!"
+        else
+            Transaction.transaction_process
+        end
+    when 4
+        customers = Account.get_customer_all
+        customers.each do |acc_num, value|
+            puts "-" * 35
+            puts "Customer Info:"
+            puts "Name: #{value['name']}"
+            puts "Aadhar: #{value['aadhar']}"
+            puts "Balance: #{value['balance']}"
+        end
+    when 5
+        puts "Thank you for visiting Bank. Goodbye!"
+        break
+    else
+        puts "Invalid option. Please choose a valid number (1, 2 or 3)."
+    end
 end
