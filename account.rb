@@ -33,10 +33,10 @@ class Account
       if amount > 0
         customer['balance'] += amount
         puts "Deposited ₹#{amount} to account number #{acc_num}. New balance: ₹#{customer['balance']}"
-        self.set_success_transaction_history(acc_num)
+        self.set_deposit_success_transaction_history(acc_num)
       else
         puts "Invalid deposit amount!"
-        self.set_fail_transaction_history(acc_num)
+        self.set_deposit_fail_transaction_history(acc_num)
       end
     else
       puts "Account not found!"
@@ -46,18 +46,21 @@ class Account
   def self.withdraw(acc_num, amount)
     customer = self.get_customer(acc_num)
     if customer
+      $transaction_id += 1
       if amount > 0 && amount <= customer['balance']
         customer['balance'] -= amount
         puts "Withdrew ₹#{amount} from account number #{acc_num}. Remaining balance: ₹#{customer['balance']}"
+        self.set_withdraw_success_transaction_history(acc_num)
       else
         puts "Invalid withdrawal amount or insufficient funds!"
+        self.set_withdraw_fail_transaction_history(acc_num)
       end
     else
       puts "Account not found!"
     end
   end
 
-  def self.set_success_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
+  def self.set_deposit_success_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
     $transaction_data[$transaction_id] = {
               "from_customer" => sender_acc_num,
               "to_customer" => receiver_acc_num, 
@@ -66,7 +69,25 @@ class Account
     }
   end
 
-  def self.set_fail_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
+  def self.set_deposit_fail_transaction_history(sender_acc_num = "Bank",receiver_acc_num)
+    $transaction_data[$transaction_id] = {
+              "from_customer" => sender_acc_num, 
+              "to_customer" => receiver_acc_num, 
+              "status" => "Failure",
+              "message" => "Invalid deposit amount!"
+    }
+  end
+
+  def self.set_withdraw_success_transaction_history(sender_acc_num ,receiver_acc_num = "Bank")
+    $transaction_data[$transaction_id] = {
+              "from_customer" => sender_acc_num,
+              "to_customer" => receiver_acc_num, 
+              "status" => "Success",
+              "message" => "Done"
+    }
+  end
+
+  def self.set_withdraw_fail_transaction_history(sender_acc_num,receiver_acc_num = "Bank")
     $transaction_data[$transaction_id] = {
               "from_customer" => sender_acc_num, 
               "to_customer" => receiver_acc_num, 
