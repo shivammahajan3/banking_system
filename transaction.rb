@@ -117,7 +117,12 @@ class Transaction
                 else
                     puts "From : Bank"
                 end
-                puts "To Customer: #{to_customer['name']} (#{history['to_customer']})"
+
+                if to_customer
+                    puts "To Customer: #{to_customer['name']} (#{history['to_customer']})"
+                else
+                    puts "To : Bank"
+                end
                 puts "Status: #{history['status']}"
                 puts "Message: #{history['message']}"
                 puts "-" * 35
