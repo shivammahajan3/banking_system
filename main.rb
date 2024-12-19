@@ -1,37 +1,73 @@
 require_relative 'account'
-require_relative 'employee'
-include BankingSystem
+require_relative 'transaction'
 
 puts "-------------------------------"
-puts "Welcome to the Fraud Bank (^^)"
+puts "Welcome to the Bank (^^)"
 puts "-------------------------------"
 
-puts "Select option in Number 1 or 2"
-puts "-------------------------------"
-puts "1. Employee Registration"
-puts "2. New Account"
+Account.create_dummy_accounts
 
-option = gets.to_i
+loop do
+    puts "-------------------------------------"
+    puts "Select option in Number 1, 2, 3 or 4"
+    puts "-------------------------------------"
+    puts "1. Create New Account"
+    puts "2. Search Customers"
+    puts "3. Transaction"
+    puts "4. All Customer Details"
+    puts "5. Exit"
 
-case option
-when 1
-    puts "Enter Your Name"
-    name = gets
-    puts "Enter Your Email"
-    email = gets
-    puts "Enter Your Password"
-    password = gets
-    Employee.new(name,email,password)
-when 2
-    puts "Enter Your Name"
-    name = gets
-    puts "Enter aadhar Number"
-    aadhar = gets.to_i
-    puts "Enter Contact Number"
-    contact = gets.to_i
-    puts "Deposit Initial Fund"
-    fund = gets.to_i
-    Account.new(name,fund,contact,aadhar)
-else
-    puts "Invalid option. Please choose a valid number (1 or 2)."
+    option = gets.to_i
+    begin
+        case option
+        when 1
+            puts "Enter Your Name"
+            name = gets.chomp.strip
+            raise "Name Can't be Empty!" if name.empty? || name.to_i > 0
+            puts "Enter aadhar Number"
+            aadhar = Integer(gets.chomp)
+            if aadhar.digits.length == 12
+                puts "Deposit Initial Fund"
+                fund = Float(gets.chomp)
+                raise "Initial deposit must be greater than or zero!" if fund < 0
+                Account.new(name, fund, aadhar)
+            else
+                puts "Addhar Number has only 12 digit Please enter Valid Aadhar!"
+            end
+        when 2
+            puts "Enter Account Number"
+            account_number = gets.chomp
+            customer = Account.get_customer(account_number)
+            if customer
+                puts "Customer Info:"
+                puts "Name: #{customer['name']}"
+                puts "Name: #{account_number}"
+                puts "Aadhar: #{customer['aadhar']}"
+                puts "Balance: #{customer['balance']}"
+            else
+                puts "Customer Not found! Please enter valid account number"
+            end
+        when 3
+            Transaction.transaction_process
+        when 4
+            customers = Account.get_customer_all
+            customers.each do |acc_num, value|
+                puts "-" * 35
+                puts "Customer Info:"
+                puts "Name: #{value['name']}"
+                puts "Account Number: #{acc_num}"
+                puts "Aadhar: #{value['aadhar']}"
+                puts "Balance: #{value['balance']}"
+            end
+        when 5
+            puts "Thank you for visiting Bank. Goodbye!"
+            break
+        else
+            puts "Invalid option. Please choose a valid number (1, 2 or 3)."
+        end
+    rescue ArgumentError => e
+        puts "Invalid input. Please enter a valid number."
+    rescue RuntimeError => e 
+        puts "Error: #{e}"
+    end
 end
