@@ -5,8 +5,6 @@ puts "-------------------------------"
 puts "Welcome to the Bank (^^)"
 puts "-------------------------------"
 
-account = nil 
-
 Account.create_dummy_accounts
 
 loop do
@@ -25,14 +23,14 @@ loop do
         when 1
             puts "Enter Your Name"
             name = gets.chomp.strip
-            raise "Name Can't be Empty!" if name.empty?
+            raise "Name Can't be Empty!" if name.empty? || name.to_i > 0
             puts "Enter aadhar Number"
             aadhar = Integer(gets.chomp)
             if aadhar.digits.length == 12
                 puts "Deposit Initial Fund"
                 fund = Float(gets.chomp)
                 raise "Initial deposit must be greater than or zero!" if fund < 0
-                account = Account.new(name, fund, aadhar)
+                Account.new(name, fund, aadhar)
             else
                 puts "Addhar Number has only 12 digit Please enter Valid Aadhar!"
             end
@@ -50,11 +48,7 @@ loop do
                 puts "Customer Not found! Please enter valid account number"
             end
         when 3
-            if account.nil?
-                puts "You need to create an account first!"
-            else
-                Transaction.transaction_process
-            end
+            Transaction.transaction_process
         when 4
             customers = Account.get_customer_all
             customers.each do |acc_num, value|
