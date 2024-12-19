@@ -80,22 +80,24 @@ class Transaction
         sender['balance'] -= amount
         receiver['balance'] += amount
         puts "Transferred ₹#{amount} from account number #{sender_acc_num} to account number #{receiver_acc_num}"
-        set_transaction(sender_acc_num, receiver_acc_num, "Success", "Amount transfer successfully")
+        set_transaction(sender_acc_num, receiver_acc_num, "Success", "Amount transfer successfully",amount)
       else
         puts "Invalid transfer amount or insufficient funds!"
-        set_transaction(sender_acc_num, receiver_acc_num, "Failure", "Insufficient funds or invalid amount")
+        set_transaction(sender_acc_num, receiver_acc_num, "Failure", "Insufficient funds or invalid amount",amount)
       end
     else
       puts "Invalid sender or receiver account number!"
     end
   end
 
-  def self.set_transaction(from_customer, to_customer, status, message)
+  def self.set_transaction(from_customer, to_customer, status, message,amount)
     $transaction_data[$transaction_id] = {
       "from_customer" => from_customer,
       "to_customer" => to_customer,
       "status" => status,
-      "message" => message
+      "message" => message,
+      "amount" => amount,
+      "time" => "#{(Time.now.hour % 12 == 0 ? 12 : Time.now.hour % 12)}:#{Time.now.min}:#{Time.now.sec} #{Time.now.hour >= 12 ? 'PM' : 'AM'} Date:#{Time.now.day}/#{Time.now.mon}/#{Time.now.year}"
     }
   end
 
@@ -124,6 +126,8 @@ class Transaction
         end
         puts "Status: #{history['status']}"
         puts "Message: #{history['message']}"
+        puts "Amount: #{history['amount']}"
+        puts "Transaction Time: #{history['time']}"
         puts "-" * 35
       end
     end
