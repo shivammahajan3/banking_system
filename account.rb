@@ -33,10 +33,10 @@ class Account
       if amount > 0
         customer['balance'] += amount
         puts "Deposited ₹#{amount} to account number #{acc_num}. New balance: ₹#{customer['balance']}"
-        record_transaction("Bank", acc_num, "Success", "Deposit successful")
+        record_transaction("Bank", acc_num, "Success", "Deposit successful",amount)
       else
         puts "Invalid deposit amount!"
-        record_transaction("Bank", acc_num, "Failure", "Invalid deposit amount")
+        record_transaction("Bank", acc_num, "Failure", "Invalid deposit amount",amount)
       end
     else
       puts "Account not found!"
@@ -50,22 +50,24 @@ class Account
       if amount > 0 && amount <= customer['balance']
         customer['balance'] -= amount
         puts "Withdrew ₹#{amount} from account number #{acc_num}. Remaining balance: ₹#{customer['balance']}"
-        record_transaction(acc_num, "Bank", "Success", "Withdrawal successful")
+        record_transaction(acc_num, "Bank", "Success", "Withdrawal successful",amount)
       else
         puts "Invalid withdrawal amount or insufficient funds!"
-        record_transaction(acc_num, "Bank", "Failure", "Insufficient funds or invalid amount")
+        record_transaction(acc_num, "Bank", "Failure", "Insufficient funds or invalid amount",amount)
       end
     else
       puts "Account not found!"
     end
   end
 
-  def self.record_transaction(from_customer, to_customer, status, message)
+  def self.record_transaction(from_customer, to_customer, status, message,amount)
     $transaction_data[$transaction_id] = {
       "from_customer" => from_customer,
       "to_customer" => to_customer,
       "status" => status,
-      "message" => message
+      "message" => message,
+      "amount" => amount,
+      "time" => "#{(Time.now.hour % 12 == 0 ? 12 : Time.now.hour % 12)}:#{Time.now.min}:#{Time.now.sec} #{Time.now.hour >= 12 ? 'PM' : 'AM'} Date : #{Time.now.day}/#{Time.now.mon}/#{Time.now.year}"
     }
   end
 
