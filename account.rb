@@ -69,6 +69,22 @@ class Account
     }
   end
 
+  # Method to create dummy customers
+  def self.create_dummy_accounts
+    dummy_accounts = [
+        { name: "Cheems", fund: 500,  aadhar: 6545646 },
+        { name: "Chinni", fund: 900,  aadhar: 9848787 },
+        { name: "Bobi", fund: 500,  aadhar: 987987987987 },
+        { name: "Chintu", fund: 10500,  aadhar: 54564564 },
+        { name: "Veer", fund: 50,  aadhar: 798456151 },
+        { name: "Imli", fund: 5000000,  aadhar: 456456464 }
+    ]
+
+    dummy_accounts.each do |customer|
+        Account.new(customer[:name],customer[:fund],customer[:aadhar])
+    end
+  end
+
   private
 
   def generate_account_number
