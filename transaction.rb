@@ -78,26 +78,23 @@ class Transaction
           sender['balance'] -= amount
           receiver['balance'] += amount
           puts "Transferred ₹#{amount} from account number #{sender_acc_num} to account number #{receiver_acc_num}"
-          
-          $transaction_data[$transaction_id] = {
-            "from_customer" => sender_acc_num, 
-            "to_customer" => receiver_acc_num, 
-            "status" => "Success",
-            "message" => "Done"
-          }
+          set_transaction(sender_acc_num, receiver_acc_num, "Success", "Amount transfer successfully")
         else
           puts "Invalid transfer amount or insufficient funds!"
-          
-          $transaction_data[$transaction_id] = {
-            "from_customer" => sender_acc_num,
-            "to_customer" => receiver_acc_num,
-            "status" => "Failure",
-            "message" => "Insufficient funds"
-          }
+          set_transaction(sender_acc_num, receiver_acc_num, "Failure", "Insufficient funds or invalid amount")
         end
       else
         puts "Invalid sender or receiver account number!"
       end
+    end
+
+    def self.set_transaction(from_customer, to_customer, status, message)
+      $transaction_data[$transaction_id] = {
+        "from_customer" => from_customer,
+        "to_customer" => to_customer,
+        "status" => status,
+        "message" => message
+      }
     end
 
     def self.get_transaction_history(acc_num)
